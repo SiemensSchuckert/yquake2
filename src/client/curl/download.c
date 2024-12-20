@@ -338,6 +338,14 @@ static void CL_CheckAndQueueDownload(char *path)
 		return;
 	}
 
+	for (int c = 0; c < length; c++)
+	{
+		if ( path[c] == '\xD' )
+		{
+			path[c] = '\0';
+		}
+	}
+
 	// The good, old problem with Windows being case sensitive
 	// and Unix platforms are not. We're asuming that the
 	// the server admin did the right things(tm). That should
