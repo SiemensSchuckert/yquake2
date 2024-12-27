@@ -43,6 +43,7 @@ extern cvar_t *vid_renderer;
 static cvar_t *r_vsync;
 static cvar_t *gl_anisotropic;
 static cvar_t *gl_msaa_samples;
+static cvar_t *sw_colorlight;
 static cvar_t *gl3_colorlight;
 static cvar_t *gl4_colorlight;
 static cvar_t *vk_dynamic;
@@ -63,6 +64,7 @@ static menuslider_s s_gl1_overbrightbits_slider;
 static menuslider_s s_gl3_overbrightbits_slider;
 static menuslider_s s_gl4_overbrightbits_slider;
 static menuslider_s s_vk_overbrightbits_slider;
+static menulist_s s_sw_colorlight_list;
 static menulist_s s_gl3_colorlight_list;
 static menulist_s s_gl4_colorlight_list;
 static menulist_s s_vk_dynamic_list;
@@ -348,6 +350,11 @@ ApplyChanges(void *unused)
 	if (gl3_colorlight && gl3_colorlight->value != s_gl3_colorlight_list.curvalue)
 	{
 		Cvar_SetValue("gl3_colorlight", s_gl3_colorlight_list.curvalue);
+	}
+
+	if (sw_colorlight && sw_colorlight->value != s_sw_colorlight_list.curvalue)
+	{
+		Cvar_SetValue("sw_colorlight", s_sw_colorlight_list.curvalue);
 	}
 
 	/* anisotropic filtering */
@@ -712,6 +719,16 @@ VID_MenuInit(void)
 			s_gl1_overbrightbits_slider.printformat = "%.0f";
 			break;
 
+		case ref_soft:
+			sw_colorlight = Cvar_Get("sw_colorlight", "1", CVAR_ARCHIVE);
+			s_sw_colorlight_list.generic.type = MTYPE_SPINCONTROL;
+			s_sw_colorlight_list.generic.name = "color light";
+			s_sw_colorlight_list.generic.x = 0;
+			s_sw_colorlight_list.generic.y = (y += 10);
+			s_sw_colorlight_list.itemnames = yesno_names;
+			s_sw_colorlight_list.curvalue = (sw_colorlight->value != 0);
+			break;
+
 		default:
 			break;
 	}
@@ -883,6 +900,9 @@ VID_MenuInit(void)
 		case ref_gl1:
 			Menu_AddItem(&s_opengl_menu, (void *)&s_gl1_intensity_slider);
 			Menu_AddItem(&s_opengl_menu, (void *)&s_gl1_overbrightbits_slider);
+			break;
+		case ref_soft:
+			Menu_AddItem(&s_opengl_menu, (void *)&s_sw_colorlight_list);
 			break;
 		default:
 			break;
